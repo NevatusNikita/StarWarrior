@@ -125,6 +125,17 @@ class Skywalker(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move(
             tile_width * pos_x, tile_height * pos_y)
         self.mask = pygame.mask.from_surface(self.image)
+        self.isJump = False
+        self.jumpCount = 10
+
+    def jump(self):
+        if self.isJump:
+            if self.jumpCount >= -10:
+                self.rect.y -= self.jumpCount ** 2 * 0.1
+                self.jumpCount -= 1
+            else:
+                self.isJump = False
+                self.jumpCount = 10
 
 
 class DarthVader(pygame.sprite.Sprite):
@@ -134,6 +145,17 @@ class DarthVader(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move(
             tile_width * pos_x, tile_height * pos_y)
         self.mask = pygame.mask.from_surface(self.image)
+        self.isJump = False
+        self.jumpCount = 10
+
+    def jump(self):
+        if self.isJump:
+            if self.jumpCount >= -10:
+                self.rect.y -= self.jumpCount ** 2 * 0.1
+                self.jumpCount -= 1
+            else:
+                self.isJump = False
+                self.jumpCount = 10
 
 
 class SkywalkerDoor(pygame.sprite.Sprite):
@@ -158,6 +180,10 @@ class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
         if tile_type == 'button':
             params = buttons_group, all_sprites, rigid_group
+        elif tile_type == 'box':
+            params = rigid_group, tiles_group
+        elif tile_type == 'vertical':
+            params = vertical_group, all_sprites, rigid_group
         elif tile_type != 'empty':
             params = tiles_group, all_sprites, rigid_group
         else:
@@ -197,8 +223,10 @@ def generate_level(level):
                 Tile('horizontal', x, y)
             elif level[y][x] == 's':
                 skywalker = Skywalker(x, y)
+                Tile('horizontal', x, y)
             elif level[y][x] == 'd':
                 darth_vader = DarthVader(x, y)
+                Tile('horizontal', x, y)
             elif level[y][x] == 'b' and box_c == 0:
                 box_1 = Tile('box', x, y)
                 Tile('horizontal', x, y)
@@ -225,7 +253,7 @@ def generate_level(level):
 
 
 def motion_handler_s(motion):
-    global motion_s, ctr_s, lc_s, rc_s, stop_s, skywalker_win, sv_c
+    global motion_s, ctr_s, lc_s, rc_s, stop_s, skywalker_win, sv_c, b1_c, b2_c
     if door1.rect.x <= player1.rect.x <= door1.rect.x + 10 and \
             door1.rect.y <= player1.rect.y <= door1.rect.y + 30:
         skywalker_win = True
@@ -240,6 +268,12 @@ def motion_handler_s(motion):
                 rc_s = (rc_s + 1) % len(rg_images_s)
         if not any(pygame.sprite.collide_mask(player1, spr) for spr in rigid_group.sprites()):
             prev_x, prev_y = player1.rect.x, player1.rect.y
+            if not any(pygame.sprite.collide_mask(box1, spr) for spr in all_sprites.sprites()):
+                while not any(pygame.sprite.collide_mask(box1, spr) for spr in all_sprites.sprites()):
+                    box1.rect.y += 1
+            if not any(pygame.sprite.collide_mask(box2, spr) for spr in all_sprites.sprites()):
+                while not any(pygame.sprite.collide_mask(box2, spr) for spr in all_sprites.sprites()):
+                    box2.rect.y += 1
             if motion == 'left':
                 if 0 <= player1.rect.x - step:
                     player1.rect.x -= step
@@ -253,14 +287,14 @@ def motion_handler_s(motion):
                 if 0 <= player1.rect.y - step:
                     player1.rect.y -= step
             if pygame.sprite.collide_mask(player1, box1):
-                if motion_dv == 'left' and motion_s != 'up' and motion_s != 'down':
+                if motion_s == 'left' and motion_s != 'up' and motion_s != 'down':
                     box1.rect.x -= step
                     player1.rect.x -= step
                 else:
                     box1.rect.x += step
                     player1.rect.x += step
             if pygame.sprite.collide_mask(player1, box2):
-                if motion_dv == 'left' and motion_s != 'up' and motion_s != 'down':
+                if motion_s == 'left' and motion_s != 'up' and motion_s != 'down':
                     box2.rect.x -= step
                     player1.rect.x -= step
                 else:
@@ -274,6 +308,22 @@ def motion_handler_s(motion):
                     and sv_c != 0:
                 vertical1.rect.y -= 70
                 sv_c -= 1
+            if any(pygame.sprite.collide_mask(box1, spr) for spr in buttons_group.sprites()) and \
+                    b1_c == 0:
+                vertical1.rect.y += 70
+                b1_c += 1
+            elif not any(pygame.sprite.collide_mask(box1, spr) for spr in buttons_group.sprites()) \
+                    and b1_c != 0:
+                vertical1.rect.y -= 70
+                b1_c -= 1
+            if any(pygame.sprite.collide_mask(box2, spr) for spr in buttons_group.sprites()) and \
+                    b2_c == 0:
+                vertical1.rect.y += 70
+                b2_c += 1
+            elif not any(pygame.sprite.collide_mask(box2, spr) for spr in buttons_group.sprites()) \
+                    and b2_c != 0:
+                vertical1.rect.y -= 70
+                b2_c -= 1
             if any(pygame.sprite.collide_mask(player1, spr) for spr in rigid_group.sprites()):
                 player1.rect.x, player1.rect.y = prev_x, prev_y
         else:
@@ -321,7 +371,7 @@ def change_s_position(events):
 
 
 def motion_handler_dv(motion):
-    global motion_dv, ctr_dv, lc_dv, rc_dv, stop_dv, darth_vader_win, dv_c
+    global motion_dv, ctr_dv, lc_dv, rc_dv, stop_dv, darth_vader_win, dv_c, jump_dv, jump_c_dv
     if door2.rect.x <= player2.rect.x <= door2.rect.x + 10 and \
             door2.rect.y <= player2.rect.y <= door2.rect.y + 30:
         darth_vader_win = True
@@ -370,6 +420,12 @@ def motion_handler_dv(motion):
                     and dv_c != 0:
                 vertical1.rect.y -= 70
                 dv_c -= 1
+            if not any(pygame.sprite.collide_mask(box1, spr) for spr in all_sprites.sprites()):
+                while not any(pygame.sprite.collide_mask(box1, spr) for spr in all_sprites.sprites()):
+                    box1.rect.y += 1
+            if not any(pygame.sprite.collide_mask(box2, spr) for spr in all_sprites.sprites()):
+                while not any(pygame.sprite.collide_mask(box2, spr) for spr in all_sprites.sprites()):
+                    box2.rect.y += 1
             if any(pygame.sprite.collide_mask(player2, spr) for spr in rigid_group.sprites()):
                 player2.rect.x, player2.rect.y = prev_x, prev_y
         else:
@@ -447,6 +503,7 @@ if __name__ == '__main__':
     special_group = pygame.sprite.Group()
     empty_tiles_group = pygame.sprite.Group()
     buttons_group = pygame.sprite.Group()
+    vertical_group = pygame.sprite.Group()
     clock = pygame.time.Clock()
     start_screen()
     size = width, height = 1500, 800
@@ -486,10 +543,14 @@ if __name__ == '__main__':
     player1, player2, door1, door2, box1, box2, vertical1, button1, button2 = generate_level(load_level(level_num))
     skywalker_win = False
     darth_vader_win = False
+    jump_dv = False
+    jump_c_dv = 10
     motion_s = 'stop'
     motion_dv = 'stop'
     dv_c = 0
     sv_c = 0
+    b1_c = 0
+    b2_c = 0
     step = 6
     ctr_s, w_ctr_s, w_dir_ctr_s = 0, 0, 0
     ctr_dv, w_ctr_dv, w_dir_ctr_dv = 0, 0, 0
@@ -503,10 +564,8 @@ if __name__ == '__main__':
     while True:
         play_fon = pygame.transform.scale(load_image('play_fon.jpg'), (1050, 560))
         screen.blit(play_fon, (0, 0))
-        change_dv_position(pygame.event.get())
-        rigid_group.draw(screen)
         all_sprites.draw(screen)
-        tiles_group.draw(screen)
+        change_dv_position(pygame.event.get())
         if not skywalker_win:
             player1_group.draw(screen)
         if not darth_vader_win:
