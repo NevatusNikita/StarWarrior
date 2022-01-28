@@ -515,6 +515,10 @@ if __name__ == '__main__':
                                          'dv_r2.png',
                                          'dv_r3.png',
                                          'dv_r4.png']))
+    clock = pygame.time.Clock()
+    size = width, height = 807, 807
+    pygame.display.set_mode(size)
+    start_screen()
     while True:
         FPS = 60
         all_sprites = pygame.sprite.Group()
@@ -526,10 +530,6 @@ if __name__ == '__main__':
         empty_tiles_group = pygame.sprite.Group()
         buttons_group = pygame.sprite.Group()
         vertical_group = pygame.sprite.Group()
-        clock = pygame.time.Clock()
-        size = width, height = 807, 807
-        pygame.display.set_mode(size)
-        start_screen()
         size = (1500, 800)
         screen = pygame.display.set_mode(size)
         level_num = ''
