@@ -4,7 +4,7 @@ import sys
 
 fps = 60
 pygame.init()
-size = width, height = 807, 807
+size = 807, 807
 screen = pygame.display.set_mode(size)
 screen.fill((0, 0, 0))
 tile_width = tile_height = 70
@@ -292,27 +292,27 @@ def motion_handler_s(motion):
                     player1.rect.x += step
             if any(pygame.sprite.collide_mask(player1, spr) for spr in buttons_group.sprites()) and \
                     sv_c == 0:
-                vertical1.rect.y += 77
+                vertical1.rect.y += 71
                 sv_c += 1
             elif not any(pygame.sprite.collide_mask(player1, spr) for spr in buttons_group.sprites()) \
                     and sv_c != 0:
-                vertical1.rect.y -= 77
+                vertical1.rect.y -= 71
                 sv_c -= 1
             if any(pygame.sprite.collide_mask(box1, spr) for spr in buttons_group.sprites()) and \
                     b1_c == 0:
-                vertical1.rect.y += 77
+                vertical1.rect.y += 71
                 b1_c += 1
             elif not any(pygame.sprite.collide_mask(box1, spr) for spr in buttons_group.sprites()) \
                     and b1_c != 0:
-                vertical1.rect.y -= 77
+                vertical1.rect.y -= 70
                 b1_c -= 1
             if any(pygame.sprite.collide_mask(box2, spr) for spr in buttons_group.sprites()) and \
                     b2_c == 0:
-                vertical1.rect.y += 77
+                vertical1.rect.y += 71
                 b2_c += 1
             elif not any(pygame.sprite.collide_mask(box2, spr) for spr in buttons_group.sprites()) \
                     and b2_c != 0:
-                vertical1.rect.y -= 77
+                vertical1.rect.y -= 71
                 b2_c -= 1
             if any(pygame.sprite.collide_mask(player1, spr) for spr in rigid_group.sprites()):
                 player1.rect.x, player1.rect.y = prev_x, prev_y
@@ -422,27 +422,27 @@ def motion_handler_dv(motion):
                     player2.rect.x += step
             if any(pygame.sprite.collide_mask(player2, spr) for spr in buttons_group.sprites()) and \
                     dv_c == 0:
-                vertical1.rect.y += 77
+                vertical1.rect.y += 71
                 dv_c += 1
             elif not any(pygame.sprite.collide_mask(player2, spr) for spr in buttons_group.sprites()) \
                     and dv_c != 0:
-                vertical1.rect.y -= 77
+                vertical1.rect.y -= 71
                 dv_c -= 1
             if any(pygame.sprite.collide_mask(box1, spr) for spr in buttons_group.sprites()) and \
                     b1_c_dv == 0:
-                vertical1.rect.y += 77
+                vertical1.rect.y += 71
                 b1_c_dv += 1
             elif not any(pygame.sprite.collide_mask(box1, spr) for spr in buttons_group.sprites()) \
                     and b1_c_dv != 0:
-                vertical1.rect.y -= 77
+                vertical1.rect.y -= 71
                 b1_c_dv -= 1
             if any(pygame.sprite.collide_mask(box2, spr) for spr in buttons_group.sprites()) and \
                     b2_c_dv == 0:
-                vertical1.rect.y += 77
+                vertical1.rect.y += 71
                 b2_c_dv += 1
             elif not any(pygame.sprite.collide_mask(box2, spr) for spr in buttons_group.sprites()) \
                     and b2_c_dv != 0:
-                vertical1.rect.y -= 77
+                vertical1.rect.y -= 71
                 b2_c_dv -= 1
             if any(pygame.sprite.collide_mask(player1, spr) for spr in rigid_group.sprites()):
                 player1.rect.x, player1.rect.y = prev_x, prev_y
@@ -492,51 +492,7 @@ def change_dv_position(events):
     change_s_position(events)
 
 
-def new_game():
-    pygame.display.set_mode((select_width, select_height))
-    select_a_level()
-    while True:
-        screen.blit(play_fon, (0, 0))
-        change_dv_position(pygame.event.get())
-        rigid_group.draw(screen)
-        all_sprites.draw(screen)
-        tiles_group.draw(screen)
-        if not skywalker_win:
-            player1_group.draw(screen)
-        if not darth_vader_win:
-            player2_group.draw(screen)
-        if skywalker_win and darth_vader_win:
-            exit()
-        rigid_group.draw(screen)
-        clock.tick(FPS)
-        pygame.display.flip()
-
-
 if __name__ == '__main__':
-    FPS = 60
-    all_sprites = pygame.sprite.Group()
-    tiles_group = pygame.sprite.Group()
-    player1_group = pygame.sprite.Group()
-    player2_group = pygame.sprite.Group()
-    rigid_group = pygame.sprite.Group()
-    special_group = pygame.sprite.Group()
-    empty_tiles_group = pygame.sprite.Group()
-    buttons_group = pygame.sprite.Group()
-    vertical_group = pygame.sprite.Group()
-    clock = pygame.time.Clock()
-    start_screen()
-    size = width, height = 1500, 800
-    screen = pygame.display.set_mode(size)
-    level_num = ''
-    select_width, select_height = 940, 500
-    pygame.display.set_mode((select_width, select_height))
-    select_a_level()
-    pygame.display.set_mode((1050, 560))
-    skywalker_image = pygame.transform.scale(load_image('skywalker_stay(1).png'), (35, 53))
-    darth_vader_image = pygame.transform.scale(load_image('darth_vader_stay.png'), (35, 53))
-    darth_vader_door_image = pygame.transform.scale(load_image('darth_vader_door.png'), (63, 63))
-    skywalker_door_image = pygame.transform.scale(load_image('skywalker_door.png'), (63, 63))
-    play_fon = pygame.transform.scale(load_image('play_fon.jpg'), (1050, 560))
     tile_images = {
         'horizontal': pygame.transform.scale(load_image('horizontal_wall.png'), (70, 7)),
         'box': pygame.transform.scale(load_image('box.png'), (45, 45)),
@@ -559,42 +515,69 @@ if __name__ == '__main__':
                                          'dv_r2.png',
                                          'dv_r3.png',
                                          'dv_r4.png']))
-    player1, player2, door1, door2, box1, box2, vertical1, button1, button2 = generate_level(load_level(level_num))
-    skywalker_win = False
-    darth_vader_win = False
-    motion_s = 'stop'
-    motion_dv = 'stop'
-    jump_dv = False
-    jump_s = False
-    jump_c_dv = 7
-    jump_c_s = 7
-    dv_c = 0
-    sv_c = 0
-    b1_c = 0
-    b2_c = 0
-    b1_c_dv = 0
-    b2_c_dv = 0
-    step = 6
-    ctr_s, w_ctr_s, w_dir_ctr_s = 0, 0, 0
-    ctr_dv, w_ctr_dv, w_dir_ctr_dv = 0, 0, 0
-    speed = 10
-    stop_s = 'disable'
-    stop_dv = 'disable'
-    lc_s, rc_s = 0, 0
-    lc_dv, rc_dv = 0, 0
-    player1_prev_x, player1_prev_y = player1.rect.x, player1.rect.y
-    player2_prev_x, player2_prev_y = player2.rect.x, player2.rect.y
     while True:
+        FPS = 60
+        all_sprites = pygame.sprite.Group()
+        tiles_group = pygame.sprite.Group()
+        player1_group = pygame.sprite.Group()
+        player2_group = pygame.sprite.Group()
+        rigid_group = pygame.sprite.Group()
+        special_group = pygame.sprite.Group()
+        empty_tiles_group = pygame.sprite.Group()
+        buttons_group = pygame.sprite.Group()
+        vertical_group = pygame.sprite.Group()
+        clock = pygame.time.Clock()
+        size = width, height = 807, 807
+        pygame.display.set_mode(size)
+        start_screen()
+        size = (1500, 800)
+        screen = pygame.display.set_mode(size)
+        level_num = ''
+        select_width, select_height = 940, 500
+        pygame.display.set_mode((select_width, select_height))
+        select_a_level()
+        pygame.display.set_mode((1050, 560))
+        skywalker_image = pygame.transform.scale(load_image('skywalker_stay(1).png'), (35, 53))
+        darth_vader_image = pygame.transform.scale(load_image('darth_vader_stay.png'), (35, 53))
+        darth_vader_door_image = pygame.transform.scale(load_image('darth_vader_door.png'), (63, 63))
+        skywalker_door_image = pygame.transform.scale(load_image('skywalker_door.png'), (63, 63))
         play_fon = pygame.transform.scale(load_image('play_fon.jpg'), (1050, 560))
-        screen.blit(play_fon, (0, 0))
-        all_sprites.draw(screen)
-        change_dv_position(pygame.event.get())
-        if not skywalker_win:
-            player1_group.draw(screen)
-        if not darth_vader_win:
-            player2_group.draw(screen)
-        if skywalker_win and darth_vader_win:
-            exit()
-        rigid_group.draw(screen)
-        clock.tick(FPS)
-        pygame.display.flip()
+        player1, player2, door1, door2, box1, box2, vertical1, button1, button2 = generate_level(load_level(level_num))
+        skywalker_win = False
+        darth_vader_win = False
+        motion_s = 'stop'
+        motion_dv = 'stop'
+        jump_dv = False
+        jump_s = False
+        jump_c_dv = 7
+        jump_c_s = 7
+        dv_c = 0
+        sv_c = 0
+        b1_c = 0
+        b2_c = 0
+        b1_c_dv = 0
+        b2_c_dv = 0
+        step = 6
+        ctr_s, w_ctr_s, w_dir_ctr_s = 0, 0, 0
+        ctr_dv, w_ctr_dv, w_dir_ctr_dv = 0, 0, 0
+        speed = 10
+        stop_s = 'disable'
+        stop_dv = 'disable'
+        lc_s, rc_s = 0, 0
+        lc_dv, rc_dv = 0, 0
+        player1_prev_x, player1_prev_y = player1.rect.x, player1.rect.y
+        player2_prev_x, player2_prev_y = player2.rect.x, player2.rect.y
+        while True:
+            play_fon = pygame.transform.scale(load_image('play_fon.jpg'), (1050, 560))
+            screen.blit(play_fon, (0, 0))
+            all_sprites.draw(screen)
+            change_dv_position(pygame.event.get())
+            if not skywalker_win:
+                player1_group.draw(screen)
+            if not darth_vader_win:
+                player2_group.draw(screen)
+            if skywalker_win and darth_vader_win:
+                break
+            rigid_group.draw(screen)
+            clock.tick(FPS)
+            pygame.display.flip()
